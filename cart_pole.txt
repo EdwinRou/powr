@@ -1,0 +1,1 @@
+python train.py --project operator_learning --env CartPole-v1 --eta 0.1 --gamma 0.99 --la 1e-6 --epochs 16 --device gpu --save-gif-every 4 --subsamples 5_000
