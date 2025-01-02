@@ -1,0 +1,5 @@
+sudo apt-get install swig
+
+then
+
+pip install gymnasium[box2d]

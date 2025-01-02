@@ -43,7 +43,7 @@ def parse_args():
     parser.add_argument("--epochs", "-e", default=200, type=int, help="Number of training epochs, i.e. Data Sampling, P computation, Policy Mirror Descent, and Testing",)
     parser.add_argument("--train-episodes", "-te", default=1, type=int, help="Number of episodes used to sample for each epoch",)
     parser.add_argument("--parallel-envs", "-pe", default=3, type=int, help="Number of parallel environments",)
-    parser.add_argument("--subsamples", "-subs", default=10000, type=int, help="Number of subsamples for nystrom kernel",)
+    parser.add_argument("--subsamples", "-subs", default=1_000, type=int, help="Number of subsamples for nystrom kernel",)
     parser.add_argument("--iter-pmd", "-pmd", default=1, type=int, help="Number of iteration to update policy parameters in an off-policy manner", )
     parser.add_argument("--eval-episodes", "-ee", default=1, type=int, help="Number of evaluation episodes")
     parser.add_argument("--save-gif-every", "-sge", default=None, type=int, help="Save gif every <save-gif-every> epochs",)

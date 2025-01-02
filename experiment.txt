@@ -1,6 +1,6 @@
 python train.py \
---project operator_learning_Pendulum \
---env Pendulum-v1 \
+--project operator_learning_Lunar_Lander \
+--env LunarLander-v2 \
 --eta 0.1 \
 --gamma 0.99 \
 --la 1e-6 \
