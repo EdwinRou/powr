@@ -1,1 +1,18 @@
-python train.py --project operator_learning_MountainCar --env MountainCar-v0 --eta 0.1 --gamma 0.99 --la 1e-5 --epochs 40 --device gpu --subsamples 1_000 --save-gif-every 1
+python train.py \
+--project operator_learning_Pendulum \
+--env Pendulum-v1 \
+--eta 0.1 \
+--gamma 0.99 \
+--la 1e-6 \
+--sigma 0.2 \
+--subsamples 1_000 \
+--q-mem 0 \
+--warmup-episodes 3 \
+--train-episodes 3 \
+--eval-episodes 3 \
+--epochs 40 \
+--device gpu \
+--save-gif-every 1 \
+
+--save-checkpoint-every \
+--delete-Q-memory
