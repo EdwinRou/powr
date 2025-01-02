@@ -35,7 +35,7 @@ def parse_args():
     parser.add_argument("--la", default=1e-6, type=float, help="Regularization for the action-value function estimators",)
     parser.add_argument("--eta", default=0.1, type=float, help="Step size of the Policy Mirror Descent")
     parser.add_argument("--gamma", default=0.99, type=float, help="Discount factor")
-    parser.add_argument("--sigma", default=0.2, type=float, help="")
+    parser.add_argument("--sigma", default=0.2, type=float, help="smoothness of the CME kernel functions")
     parser.add_argument("--q-mem", "-qm", default=0, type=int, help="Number of Q-memories to use to use, i.e., batch size for Q functions",)
     parser.add_argument("--delete-Q-memory", "-dqm", default=False, action="store_true", help="Delete the previously estimated Q functions",)
     parser.add_argument("--early-stopping", "-es", default=None, type=int, help="Number of consecutive episodes above <env> reward threshold for early stopping the data collection",)
