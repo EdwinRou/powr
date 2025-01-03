@@ -1,18 +1,20 @@
 python train.py \
---project operator_learning_Lunar_Lander \
---env LunarLander-v2 \
+--project operator_learning_Taxi \
+--env Taxi-v3 \
 --eta 0.1 \
 --gamma 0.99 \
 --la 1e-6 \
 --sigma 0.2 \
 --subsamples 1_000 \
 --q-mem 0 \
---warmup-episodes 3 \
---train-episodes 3 \
+--warmup-episodes 12 \
+--train-episodes 6 \
 --eval-episodes 3 \
---epochs 40 \
+--iter-pmd 2 \
+--epochs 60 \
 --device gpu \
 --save-gif-every 1 \
+--q-mem 20
 
 --save-checkpoint-every \
 --delete-Q-memory
