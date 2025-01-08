@@ -10,3 +10,4 @@ wandb==0.16.6
 tqdm
 tensorboard
 rich
+stable-baselines3
