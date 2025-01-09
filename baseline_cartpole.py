@@ -10,14 +10,14 @@ from stable_baselines3.common.callbacks import BaseCallback
 config = {
     "env_name": "CartPole-v1",
     "batch_size": 64,
-    "buffer_size": 100000,
+    "buffer_size": 100_000,
     "exploration_final_eps": 0.04,
     "exploration_fraction": 0.16,
     "gamma": 0.99,
     "gradient_steps": 128,
     "learning_rate": 0.0023,
     "learning_starts": 1000,
-    "total_timesteps": 50000,
+    "total_timesteps": 50_000,
     "policy": "MlpPolicy",
     "policy_kwargs": dict(net_arch=[256, 256]),
     "target_update_interval": 10,
@@ -50,46 +50,55 @@ def evaluate_policy(model, env, n_episodes=10):
     :return: Mean and standard deviation of rewards
     """
     all_rewards = []
+    steps_epochs = []
     for episode in range(n_episodes):
         obs, _ = env.reset()  # Include the info returned by reset
         terminated, truncated = False, False
         total_reward = 0
+        number_step = 0
         while not (terminated or truncated):
             action, _ = model.predict(obs, deterministic=True)
             obs, reward, terminated, truncated, _ = env.step(action)
             total_reward += reward
+            number_step += 1
         all_rewards.append(total_reward)
-    return np.mean(all_rewards), np.std(all_rewards)
+        steps_epochs.append(number_step)
+    return np.mean(all_rewards), np.std(all_rewards), np.mean(steps_epochs)
 
 
 # Custom Callback for wandb Logging
 class WandbCallback(BaseCallback):
-    def __init__(self, eval_env, eval_freq=5000, verbose=0):
+    def __init__(self, eval_env, eval_freq=1_000, verbose=0):
         super(WandbCallback, self).__init__(verbose)
         self.eval_env = eval_env
         self.eval_freq = eval_freq
         self.episode_rewards = []
         self.current_reward = 0
+        self.current_step = 0
 
     def _on_step(self) -> bool:
         self.current_reward += self.locals["rewards"][0]
+        wandb.log({
+                "train/step_reward": self.current_reward,
+            })
         if self.locals["dones"][0]:
             # Log per-episode reward
             self.episode_rewards.append(self.current_reward)
             wandb.log({
                 "train/episode_reward": self.current_reward,
-                "train/step": self.num_timesteps,
+                "train/steps_for_epoch": self.num_timesteps - self.current_step,
                 "train/exploration_rate": self.model.exploration_rate,
             })
+            self.current_step = self.num_timesteps
             self.current_reward = 0
 
         # Perform evaluation periodically
         if self.num_timesteps % self.eval_freq == 0:
-            mean_reward, std_reward = evaluate_policy(self.model, self.eval_env)
+            mean_reward, std_reward, mean_steps_for_epoch = evaluate_policy(self.model, self.eval_env)
             wandb.log({
                 "eval/mean_reward": mean_reward,
                 "eval/std_reward": std_reward,
-                "eval/step": self.num_timesteps,
+                "eval/mean_steps_for_epoch": mean_steps_for_epoch,
             })
         return True
 
@@ -121,21 +130,47 @@ model = DQN(
 # Train the agent with wandb callback
 model.learn(
     total_timesteps=wandb.config.total_timesteps,
-    callback=WandbCallback(eval_env=gym.make("CartPole-v1"), eval_freq=5000),
+    callback=WandbCallback(eval_env=gym.make("CartPole-v1"), eval_freq=5_000),
 )
 
 # Save the model
 # model.save("dqn_cartpole")
 # wandb.save("dqn_cartpole.zip")
 
-# Test the trained agent
-obs, _ = env.reset()  # Include the info returned by reset
-for _ in range(200):
-    action, _states = model.predict(obs, deterministic=True)
-    obs, rewards, dones, info = env.step(action)
-    # env.render()
-    if dones:
-        break
+
+def test_policy(model, env, n_episodes=7, render=False):
+    """
+    Test a trained RL model on the environment and log results to wandb.
+
+    :param model: The trained RL model.
+    :param env: The environment to test on.
+    :param n_episodes: Number of episodes to test.
+    :param render: Whether to render the environment during testing.
+    """
+    episodes_rewards = []
+    for episode in range(n_episodes):
+        obs, _ = env.reset()
+        terminated, truncated = False, False
+        total_reward = 0
+        steps = 0
+
+        while not (terminated or truncated):
+            action, _states = model.predict(obs, deterministic=True)
+            obs, reward, terminated, truncated, info = env.step(action)
+            total_reward += reward
+            steps += 1
+            if render:
+                env.render()
+        episodes_rewards.append(total_reward)
+
+    print(f"Mean of reward accross {n_episodes} episodes : ", np.mean(episodes_rewards))
+    print(f"Std of reward accross {n_episodes} episodes : ", np.std(episodes_rewards))
+
+
+# Test the trained agent and log results
+eval_env = gym.make("CartPole-v1")  # Separate clean environment
+test_policy(model, eval_env, n_episodes=10, render=False)
+
 
 env.close()
 
