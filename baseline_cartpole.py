@@ -87,7 +87,7 @@ class WandbCallback(BaseCallback):
         return True
 
 
-def test_policy_with_gif(model, env, n_episodes=7, gif_name="test_env.gif"):
+def test_policy_with_gif(model, env, n_episodes=5, gif_name="test_env.gif"):
     """
     Test a trained RL model, log results, and create a GIF.
 
@@ -158,7 +158,7 @@ model.learn(
 
 # Test the trained agent and log results
 test_env = gym.make("CartPole-v1", render_mode="rgb_array")
-test_policy_with_gif(model, test_env, n_episodes=10, gif_name="cartpole_test.gif")
+test_policy_with_gif(model, test_env, n_episodes=15, gif_name="cartpole_test.gif")
 
 # Close environments
 env.close()
