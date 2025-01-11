@@ -221,7 +221,7 @@ if __name__ == "__main__":
 
         print(f"Currently running on \033[92mGPU {RESET}")
     elif device_setting == "cpu":
-        
+
         try:
             os.environ["JAX_PLATFORMS"] = "cpu"
             device = jax.devices("cpu")[0]  
@@ -233,7 +233,6 @@ if __name__ == "__main__":
         print(f"Currently running on \033[92mCPU {RESET}")
     else:
         raise ValueError(f"Unknown device setting {device_setting}, please use <cpu> or <gpu>")
-    
 
     # ** Logging Settings **
     # Create tensorboard writer
@@ -274,11 +273,11 @@ if __name__ == "__main__":
         warnings.warn(
                 f"Number of training episodes {train_episodes} not divisible by parallel environments {parallel_envs}, considering {(train_episodes // parallel_envs + 1)*parallel_envs} training episodes",
                 UserWarning,
-            )        
+            )
         train_episodes = train_episodes//parallel_envs + 1
     else:
         train_episodes = train_episodes//parallel_envs
-    
+
     iter_pmd = args.iter_pmd
     eval_episodes = args.eval_episodes
     if eval_episodes % parallel_envs != 0:
@@ -286,7 +285,7 @@ if __name__ == "__main__":
         warnings.warn(
                 f"Number of evaluation episodes {eval_episodes} not divisible by parallel environments {parallel_envs}, considering {(eval_episodes // parallel_envs + 1)*parallel_envs} evaluation episodes",
                 UserWarning,
-            )        
+            )
         eval_episodes = eval_episodes//parallel_envs + 1
     else:
         eval_episodes = eval_episodes//parallel_envs
@@ -333,7 +332,7 @@ if __name__ == "__main__":
             checkpoint=checkpoint,
             device=device_setting,
             offline=args.offline,
-        
+
     )
 
     # ** Training **
@@ -343,10 +342,10 @@ if __name__ == "__main__":
 
     powr.train( 
         epochs=epochs,
-        warmup_episodes = warmup_episodes,
-        train_episodes = train_episodes,
-        eval_episodes = eval_episodes,
-        iterations_pmd= iter_pmd,
+        warmup_episodes=warmup_episodes,
+        train_episodes=train_episodes,
+        eval_episodes=eval_episodes,
+        iterations_pmd=iter_pmd,
         eval_every=eval_every,
         save_gif_every=save_gif_every,
         save_checkpoint_every=save_checkpoint_every,
