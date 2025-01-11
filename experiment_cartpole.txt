@@ -5,14 +5,15 @@ python train.py \
 --gamma 0.99 \
 --la 1e-5 \
 --sigma 0.2 \
---subsamples 1_000 \
---warmup-episodes 4 \
---train-episodes 4 \
---eval-episodes 4 \
+--subsamples 5_000 \
+--warmup-episodes 1 \
+--train-episodes 1 \
+--eval-episodes 1 \
 --iter-pmd 1 \
---epochs 50 \
+--epochs 26 \
 --parallel-envs 4 \
---device gpu
+--device gpu \
+--save-gif-every 1
 
 --q-mem 0 \
 --save-gif-every 1

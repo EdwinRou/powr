@@ -211,10 +211,10 @@ print(f"Total testing time: {testing_time:.2f} seconds")
 columns = ["Metric", "Value"]
 data = [
     ["Number of Episodes", n_test_episodes],
-    ["Time of tesing", testing_time],
-    ["Time of training", training_time],
-    ["mean_reward", test_results["mean_reward"]],
-    ["std_reward", test_results["std_reward"]]
+    ["Time of testing (seconds)", testing_time],
+    ["Time of training (minutes)", round(training_time / 60, 2)],
+    ["mean_reward", round(test_results["mean_reward"], 2)],
+    ["std_reward", round(test_results["std_reward"], 2)]
 ]
 
 # Log the table to WandB
