@@ -3,16 +3,17 @@ python train.py \
 --env CartPole-v1 \
 --eta 0.1 \
 --gamma 0.99 \
---la 1e-6 \
+--la 1e-5 \
 --sigma 0.2 \
 --subsamples 1_000 \
---q-mem 0 \
---warmup-episodes 3 \
---train-episodes 3 \
---eval-episodes 3 \
+--warmup-episodes 4 \
+--train-episodes 4 \
+--eval-episodes 4 \
 --iter-pmd 1 \
---epochs 25 \
---device gpu \
---q-mem 100 \
+--epochs 50 \
+--parallel-envs 4 \
+--device gpu
+
+--q-mem 0 \
 --save-gif-every 1
 

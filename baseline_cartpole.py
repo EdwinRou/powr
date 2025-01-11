@@ -6,6 +6,8 @@ from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common.vec_env import DummyVecEnv
 from stable_baselines3.common.callbacks import BaseCallback
 import imageio
+import time
+
 
 config = {
     "env_name": "CartPole-v1",
@@ -87,6 +89,39 @@ class WandbCallback(BaseCallback):
         return True
 
 
+def test_policy(model, env, n_episodes=5):
+    """
+    Test a trained RL model, and return results.
+
+    :param model: The trained RL model.
+    :param env: The environment to test on.
+    :param n_episodes: Number of episodes to test.
+    """
+    episodes_rewards = []
+    for episode in range(n_episodes):
+        obs, _ = env.reset()
+        terminated, truncated = False, False
+        total_reward = 0
+
+        while not (terminated or truncated):
+            action, _states = model.predict(obs, deterministic=True)
+            obs, reward, terminated, truncated, info = env.step(action)
+            total_reward += reward
+
+        episodes_rewards.append(total_reward)
+
+    print("Results of testing:")
+    print(f"Mean reward across {n_episodes} episodes: {np.mean(episodes_rewards)}")
+    print(f"Std reward across {n_episodes} episodes: {np.std(episodes_rewards)}")
+
+    test_results = {
+        "mean_reward": np.mean(episodes_rewards),
+        "std_reward": np.std(episodes_rewards)
+    }
+
+    return test_results
+
+
 def test_policy_with_gif(model, env, n_episodes=5, gif_name="test_env.gif"):
     """
     Test a trained RL model, log results, and create a GIF.
@@ -144,13 +179,19 @@ model = DQN(
     gradient_steps=wandb.config.gradient_steps,
     policy_kwargs=wandb.config.policy_kwargs,
     verbose=1,
+    device="cuda"
 )
 
 # Train the agent with wandb callback
+start_time = time.time()
+
 model.learn(
     total_timesteps=wandb.config.total_timesteps,
     callback=WandbCallback(eval_env=gym.make("CartPole-v1")),
 )
+
+training_time = time.time() - start_time
+print(f"Total training time: {training_time // 60} minutes and {training_time % 60:.2f} seconds")
 
 # Save the model
 # model.save("dqn_cartpole")
@@ -158,7 +199,27 @@ model.learn(
 
 # Test the trained agent and log results
 test_env = gym.make("CartPole-v1", render_mode="rgb_array")
-test_policy_with_gif(model, test_env, n_episodes=15, gif_name="cartpole_test.gif")
+test_start_time = time.time()
+n_test_episodes = 50
+
+test_results = test_policy(model, test_env, n_episodes=n_test_episodes)
+
+testing_time = time.time() - test_start_time
+print(f"Total testing time: {testing_time:.2f} seconds")
+
+# Create a table with the desired values
+columns = ["Metric", "Value"]
+data = [
+    ["Number of Episodes", n_test_episodes],
+    ["Time of tesing", testing_time],
+    ["Time of training", training_time],
+    ["mean_reward", test_results["mean_reward"]],
+    ["std_reward", test_results["std_reward"]]
+]
+
+# Log the table to WandB
+test_table = wandb.Table(columns=columns, data=data)
+wandb.log({"final_performances": test_table})
 
 # Close environments
 env.close()

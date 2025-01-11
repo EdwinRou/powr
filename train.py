@@ -10,6 +10,8 @@ from pprint import pprint
 from datetime import datetime
 from tensorboardX import SummaryWriter
 from tqdm import TqdmExperimentalWarning
+import time
+
 
 jax.config.update("jax_enable_x64", True)
 os.environ["WANDB_START_METHOD"] = "thread"
@@ -336,6 +338,9 @@ if __name__ == "__main__":
 
     # ** Training **
     print(f"\033[1m\033[94mTraining the policy{RESET}")
+
+    start_time = time.time()
+
     powr.train( 
         epochs=epochs,
         warmup_episodes = warmup_episodes,
@@ -346,11 +351,33 @@ if __name__ == "__main__":
         save_gif_every=save_gif_every,
         save_checkpoint_every=save_checkpoint_every,
         args_to_save=args,
-    ) 
+    )
+
+    training_time = time.time() - start_time
+    print(f"Total training time: {training_time // 60} minutes and {training_time % 60:.2f} seconds")
 
     # ** Testing **
     print(f"\033[1m\033[94mTesting the policy{RESET}")
+
+    test_start_time = time.time()
+
     n_test_episodes = 10
     mean_reward = powr.evaluate(n_test_episodes)
+
+    testing_time = time.time() - test_start_time
+    print(f"Total testing time: {testing_time // 60} minutes and {testing_time % 60:.2f} seconds")
+
+    # Log results
+    columns = ["Metric", "Value"]
+    data = [
+        ["Time of Testing (minutes)", f"{testing_time/60:.2f}"],
+        ["Time of Training (minutes)", f"{training_time / 60:.2f}"],
+        ["Number of Test Episodes", n_test_episodes],
+        ["Test Mean Reward", f"{mean_reward:.2f}"]
+    ]
+
+    # Create and log the table to WandB
+    test_table = wandb.Table(columns=columns, data=data)
+    wandb.log({"final_performances": test_table})
 
     print(f"Policy mean reward over {n_test_episodes} episodes: {mean_reward}")

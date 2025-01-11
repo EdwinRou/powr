@@ -125,18 +125,18 @@ def log_epoch_statistics(writer, log_file, epoch, eval_result, train_result, n_t
     if eval_result is not None:
         writer.add_scalar("eval reward", eval_result, global_step)
     writer.add_scalar("train reward", train_result, global_step)
-    writer.add_scalar(
-        "Sampling and Updating steps",
-        n_warmup_episodes + epoch * (n_train_episodes + n_iter_pmd),
-        global_step,
-    )
-    writer.add_scalar("Epoch", epoch, global_step)
-    writer.add_scalar("Train Episodes", n_warmup_episodes + epoch * n_train_episodes, global_step)
-    writer.add_scalar("timestep", total_timesteps, global_step)
-    writer.add_scalar("Epoch and Warmup ", epoch + n_warmup_episodes, global_step)
-    writer.add_scalar("Sampling Time", t_sampling, global_step)
-    writer.add_scalar("Training Time", t_training, global_step)
-    writer.add_scalar("PMD Time", t_pmd, global_step)
+    # writer.add_scalar(
+    #     "Sampling and Updating steps",
+    #     n_warmup_episodes + epoch * (n_train_episodes + n_iter_pmd),
+    #     global_step,
+    # )
+    # writer.add_scalar("Epoch", epoch, global_step)
+    # writer.add_scalar("Train Episodes", n_warmup_episodes + epoch * n_train_episodes, global_step)
+    # writer.add_scalar("timestep", total_timesteps, global_step)
+    # writer.add_scalar("Epoch and Warmup ", epoch + n_warmup_episodes, global_step)
+    # writer.add_scalar("Sampling Time", t_sampling, global_step)
+    # writer.add_scalar("Training Time", t_training, global_step)
+    # writer.add_scalar("PMD Time", t_pmd, global_step)
     if t_eval is not None:
         writer.add_scalar("Eval Time", t_eval, global_step)
     writer.add_scalar("Execution Time", execution_time, global_step)
@@ -144,21 +144,21 @@ def log_epoch_statistics(writer, log_file, epoch, eval_result, train_result, n_t
     # Prepare tabulate table
     table = []
     fancy_float = lambda f : f"{f:.3f}"
-    table.extend([
-        ["Epoch", epoch],
-        ["Train reward", fancy_float(train_result)],
-    ])
+    # table.extend([
+    #     ["Epoch", epoch],
+    #     ["Train reward", fancy_float(train_result)],
+    # ])
     
     if eval_result is not None:
         table.extend([
             ["Eval reward", fancy_float(eval_result)],
         ])
     
-    table.extend([
-        ["Total timesteps", total_timesteps],
-        ["Sampling time (s)", fancy_float(t_sampling)],
-        ["Training time (s)", fancy_float(t_training)],
-        ["PMD time (s)", fancy_float(t_pmd)],])
+    # table.extend([
+    #     ["Total timesteps", total_timesteps],
+    #     ["Sampling time (s)", fancy_float(t_sampling)],
+    #     ["Training time (s)", fancy_float(t_training)],
+    #     ["PMD time (s)", fancy_float(t_pmd)],])
     
     if t_eval is not None:
         assert eval_result is not None
