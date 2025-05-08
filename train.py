@@ -369,10 +369,10 @@ if __name__ == "__main__":
     # Log results
     columns = ["Metric", "Value"]
     data = [
-        ["Time of Testing (minutes)", f"{testing_time/60:.2f}"],
-        ["Time of Training (minutes)", f"{training_time / 60:.2f}"],
+        ["Time of Testing (minutes)", round(testing_time / 60, 2)],
+        ["Time of Training (minutes)", round(training_time / 60, 2)],
         ["Number of Test Episodes", n_test_episodes],
-        ["Test Mean Reward", f"{mean_reward:.2f}"]
+        ["Test Mean Reward", round(mean_reward, 2)]
     ]
 
     # Create and log the table to WandB

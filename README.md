@@ -1,3 +1,114 @@
+# POWR: Policy Mirror Descent with Operator World-Models for Reinforcement Learning
+
+## How to Run Experiments
+
+### Clone the Repository
+(in your command line interface)
+```bash
+git clone https://github.com/EdwinRou/powr.git
+```
+
+### Set Up the Environment
+1. **Create a virtual environment** (recommended):
+   ```bash
+   python -m venv powr_env
+   source powr_env/bin/activate  # Linux/MacOS
+   powr_env\Scripts\activate   # Windows
+   ```
+
+2. **Navigate to the project folder:**
+   ```bash
+   cd powr
+   ```
+
+3. **Install the required Python dependencies:**
+   ```bash
+   pip install -r requirements_experiment.txt
+   ```
+
+4. **Install OpenCV dependencies:**
+   ```bash
+   sudo apt-get update
+   sudo apt-get install libgl1-mesa-glx
+   ```
+
+### Set Up Weights & Biases (Wandb)
+1. **Create a Wandb account:**
+   - Visit [wandb.ai](https://wandb.ai) and sign up for an account. Academic accounts are free and offer additional benefits.
+
+2. **Update `wandb.init` in `baseline_cartpole.py`:**
+   - Modify the `entity` field to match your Wandb username or username+institution (for academic accounts).
+3. run a wandb login and enter your api key, available at : ?
+
+### Experiment Details
+#### Baseline Experiment
+1. **Environment:**
+   - `CartPole` from [Gymnasium](https://gymnasium.farama.org/).
+2. **Algorithm:**
+   - Deep Q-Network (DQN).
+3. **Configuration:**
+   - Modify the `config` dictionary in `baseline_cartpole.py` to adjust the parameters (not recommanded initially).
+
+4. **Run the baseline experiment:**
+   ```bash
+   python baseline_cartpole.py
+   ```
+
+#### GPU Considerations
+- Ensure `cuda` is set up to use a GPU:
+  ```python
+  model = DQN(args, device="cuda")
+  ```
+- If CUDA is unavailable or not configured, remove `device="cuda"` to use the CPU instead.
+
+### Run the POWR Experiment
+#### Example Command
+```bash
+python train.py \
+--project operator_learning_Taxi \
+--env Taxi-v3 \
+--eta 0.1 \
+--gamma 0.99 \
+--la 1e-6 \
+--sigma 0.2 \
+--subsamples 1_000 \
+--q-mem 0 \
+--warmup-episodes 12 \
+--train-episodes 6 \
+--eval-episodes 3 \
+--iter-pmd 2 \
+--epochs 20 \
+--device gpu \
+```
+
+#### Save GIF Visualizations
+- Add the following argument to save environment visuals:
+  ```bash
+  --save-gif-every 1
+  ```
+  - Visualizations will be saved to Wandb for easy access.
+
+#### GPU Requirement
+- A GPU is required for acceptable runtime performance.
+  ```bash
+  --device gpu
+  ```
+
+## Potential Issues and Solutions
+1. **CUDA Compatibility:**
+   - Ensure CUDA is installed and correctly set up. If issues arise, switch to CPU mode as described above.
+
+2. **Environment Dependencies:**
+   - Ensure OpenCV and other dependencies are properly installed.
+
+---
+
+This guide provides a structured approach to setting up and running experiments for the POWR framework. For further details, refer to the [POWR paper](https://github.com/CSML-IIT-UCL/powr).
+
+
+
+
+# Original Documentation :
 # POWR: Operator World Models for Reinforcement Learning
 
 [Paper](https://arxiv.org/pdf/2406.19861) / [Website](https://csml-iit-ucl.github.io/powr/)
